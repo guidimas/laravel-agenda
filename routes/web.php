@@ -14,3 +14,11 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Criamos um grupo de rotas com o prefixo: teste
+Route::prefix('teste')->group(function () {
+
+    // Cria uma rota diretamente para a view
+    Route::view('/', 'teste');
+    
+});
