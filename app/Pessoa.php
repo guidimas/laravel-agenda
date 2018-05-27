@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pessoa extends Model
 {
+    // Para usar o SoftDeletes
+    use SoftDeletes;
 
     // Campos que podem ser 'bindados'
     protected $fillable = [
@@ -20,4 +23,6 @@ class Pessoa extends Model
     // Tabela do banco de dados
     protected $table = 'pessoas';
 
+    // Data considerada pelo SoftDeletes
+    protected $dates = ['deleted_at'];
 }

@@ -3,11 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Telefone extends Model
 {
+    // Para usar o SoftDeletes
+    use SoftDeletes;
     
-    // Campos que podem ser bindados
+    // Campos que podem ser 'bindados'
     protected $fillable = [
         'ddd',
         'numero',
@@ -21,4 +24,6 @@ class Telefone extends Model
     // Tabela no banco de dados
     protected $table = 'telefones';
 
+    // Data considerada pelo SoftDeletes
+    protected $dates = ['deleted_at'];
 }

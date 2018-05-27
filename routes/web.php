@@ -11,14 +11,19 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Rotas para as pessoas
+Route::prefix('pessoas')->group(function () {
 
-// Criamos um grupo de rotas com o prefixo: teste
-Route::prefix('teste')->group(function () {
+    // Lista as pessoas
+    Route::get('/', 'PessoasController@index')->name('pessoas.index');
 
-    // Cria uma rota diretamente para a view
-    Route::view('/', 'teste');
+    // View para cadastrar uma nova pessoa
+    Route::get('/cadastrar', 'PessoasController@create')->name('pessoas.create');
+
+    // Post para cadastrar a nova pessoa
+    Route::post('/salvar', 'PessoasController@store')->name('pessoas.store');
     
+    // Post para deletar uma pessoa
+    Route::post('/delete', 'PessoasController@delete')->name('pessoas.delete');
+
 });
