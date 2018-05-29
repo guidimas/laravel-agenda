@@ -24,6 +24,15 @@ Route::prefix('pessoas')->group(function () {
     Route::post('/salvar', 'PessoasController@store')->name('pessoas.store');
     
     // Post para deletar uma pessoa
-    Route::post('/delete', 'PessoasController@delete')->name('pessoas.delete');
+    Route::post('/deletar', 'PessoasController@delete')->name('pessoas.delete');
 
+    // Get para editar uma pessoa
+    Route::get('/{id}/editar', 'PessoasController@edit')->name('pessoas.edit');
+
+    // Post para salvar (update) uma pessoa
+    Route::post('/atualizar', 'PessoasController@update')->name('pessoas.update');
+
+    // Get para restaurar uma pessoa
+    Route::get('/{id}/restaurar', 'PessoasController@restore')->name('pessoas.restore');
+    
 });

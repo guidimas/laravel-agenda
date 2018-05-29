@@ -4,29 +4,67 @@
 
 @section('content')
     
-    <a href="{{ route('pessoas.create') }}" class="btn btn-primary">Novo contato</a>
+<a href="{{ route('pessoas.create') }}" class="btn btn-primary">Novo contato</a>
 
-    <div class="row">
-        @foreach ($listaPessoas as $pessoa)
-        <div class="col-4 col-xl-3 mt-3">
-            <div class="card">
-                <div class="card-header text-truncate d-flex align-items-center justify-content-between">
+<div class="row">
+    @foreach ($listaPessoas as $pessoa)
+    <div class="col-4 col-xl-3 mt-3">
+        <div class="card">
+            <div class="card-header text-truncate d-flex align-items-center justify-content-between">
+                <div class="text-truncate">
                     {{ $pessoa->nome }}
-                    <a href="#" class="small text-danger" data-toggle="modal" data-target="#excluirContato" data-nome-contato="{{ $pessoa->nome }}" data-id-contato="{{ $pessoa->id }}">Excluir</a>
                 </div>
-                <ul class="list-group list-group-flush">
-                    @forelse($pessoa->telefones as $telefone)
-                    <li class="list-group-item">
-                        ({{ $telefone->ddd }}) {{ $telefone->numero }}
-                    </li>
-                    @empty
-                    <li class="list-group-item">Sem números.</li>
-                    @endforelse
-                </ul>
+                <div class="action ml-2 text-right">
+                    <a href="{{ route('pessoas.edit', [ 'id' => $pessoa->id ]) }}" class="small text-primary mr-1">Editar</a>
+                    <a href="#!" class="small text-danger" data-toggle="modal" data-target="#excluirContato" data-nome-contato="{{ $pessoa->nome }}" data-id-contato="{{ $pessoa->id }}">Excluir</a>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+                @forelse($pessoa->telefones as $telefone)
+                <li class="list-group-item">
+                    ({{ $telefone->ddd }}) {{ $telefone->numero }}
+                </li>
+                @empty
+                <li class="list-group-item">Sem números.</li>
+                @endforelse
+            </ul>
+        </div>
+    </div>
+    @endforeach
+</div>
+
+<hr class="mt-4">
+
+<h2 class="mt-4">Contatos excluídos</h2>
+
+<div class="row">
+    @foreach ($listaPessoasExcluidas as $pessoaExcluida)
+    <div class="col-4 col-xl-3 mt-3">
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="text-truncate">
+                    {{ $pessoaExcluida->nome }}
+                </div>
+                <div class="action ml-2 text-right">
+                    <a href="{{ route('pessoas.restore', [ 'id' => $pessoaExcluida->id ]) }}" class="small text-primary mr-1">Restaurar</a>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+                @forelse($pessoaExcluida->telefones as $telefone)
+                <li class="list-group-item">
+                    ({{ $telefone->ddd }}) {{ $telefone->numero }}
+                </li>
+                @empty
+                <li class="list-group-item">Sem números.</li>
+                @endforelse
+            </ul>
+            <div class="card-body text-center p-2">
+                <span class="small text-danger">Excluído em: {{ $pessoaExcluida->deleted_at->format('d/m/Y') }}</span>
             </div>
         </div>
-        @endforeach
     </div>
+    @endforeach
+</div>
 
 <div class="modal fade" id="excluirContato" tabindex="-1" role="dialog" aria-labelledby="excluirContatoTitulo" aria-hidden="true">
     <div class="modal-dialog">
@@ -74,5 +112,3 @@
 </script>
 
 @endsection
-
-{{-- cadeira area : roupas --}}
