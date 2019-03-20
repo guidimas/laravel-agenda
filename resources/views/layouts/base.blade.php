@@ -7,6 +7,8 @@
     
     <title>Agenda</title>
 
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -21,7 +23,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{{ route('pessoas.index') }}">Contatos <span class="sr-only">(atual)</span></a>
+                    <a class="nav-link" href="{{ route('pessoas.index') }}">Contatos<span class="sr-only"> (atual)</span></a>
                 </li>
             </ul>
         </div>
@@ -34,7 +36,7 @@
         </div>
     @endif
         
-        <h2 class="mb-3">@yield('title')</h2>
+    <h2 class="mb-3">@yield('title')</h2>
     @yield('content')
     </div>
 

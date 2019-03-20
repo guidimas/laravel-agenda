@@ -35,37 +35,41 @@ class PessoasController extends Controller
 
     // GET /create
     public function create() {
+
+        // Retorna a view de cadastro
         return view('pessoas.create');
     }
 
     // POST /store
     public function store(Request $request) {
-        // Validamos os dados (com redirect automatico)
-        $this->validar($request)->validate();
+        
+        // Validamos os dados da Pessoa
+        $pessoaValidation = $this->validar($request);
 
-        // // Validamos os dados
-        // $validation = $this->validar($request);
+        // Se a pessoa for inválida
+        if ($pessoaValidation->fails())
+            // Retorna para a página anterior com as mensagens de erro na bag 'pessoa'
+            return redirect()->back()->withErrors($pessoaValidation, 'pessoa')->withInput();
 
-        // // Se der erro
-        // if ($validation->fails()) {
-        //     return redirect()->back()->withErrors($request)->withInput();
-        // }
-
+        // Se houver telefone no request
+        if ($request->has('ddd') && $request->has('numero')) {
+            
+            // Valida os dados do Telefone
+            $telefoneValidation = $this->telefonesController->validar($request);
+            
+            // Se a validação do telefone falhar
+            if ($telefoneValidation->fails())
+                // Retorna para a página anterior com as mensagens de erro na bag 'telefone'
+                return redirect()->back()->withErrors($telefoneValidation, 'telefone')->withInput();
+        }
+        
+        // Caso os dados sejam válidos:
+        
         // Salvamos o contato no banco de dados
         $pessoa = \App\Pessoa::create($request->all());
 
-        // Se houver ddd e numero do telefone
-        if ($request->has('ddd') && $request->has('numero')) {
-            
-            // Criamos o telefone
-            $telefone = new \App\Telefone();
-            $telefone->pessoa_id = $pessoa->id;
-            $telefone->ddd = $request->ddd;
-            $telefone->numero = $request->numero;
-
-            // Salvamos o telefone
-            $this->telefonesController->store($telefone);
-        }
+        // Salvamos o telefone no banco de dados
+        $this->telefonesController->store($request, $pessoa);
 
         // Redirecionamos para a página inicial com a mensagem de sucesso
         return redirect(route('pessoas.index'))->with('status', "Contato {$pessoa->nome} cadastrado com sucesso!");
@@ -73,6 +77,7 @@ class PessoasController extends Controller
 
     // GET /{id}/editar
     public function edit($id) {
+
         // Encontramos a pessoa no banco de dados
         $pessoa = $this->getPessoa($id);
         
@@ -82,6 +87,10 @@ class PessoasController extends Controller
 
     // POST /atualizar
     public function update(Request $request) {
+
+        // Validamos os dados da pessoa (com redirect automático)
+        $this->validar($request)->validate();
+
         // Encontramos a pessoa que deve ser alterada
         $pessoa = $this->getPessoa($request->input('pessoa_id'));
 
@@ -105,6 +114,18 @@ class PessoasController extends Controller
         
         // Redirecionamos para a página inicial com a mensagem de sucesso
         return redirect(route('pessoas.index'))->with('status', "Contato {$pessoa->nome} excluído com sucesso.");
+    }
+
+    // POST /desintegrar
+    public function deleteForever(Request $request) {
+        // Pegamos a pessoa
+        $pessoa = $this->getPessoaExcluida($request->input('id_pessoa'));
+
+        // Deletamos-a para sempre
+        $pessoa->forceDelete();
+
+        // Redirecionamos para a página inicial com a mensagem de sucesso
+        return redirect(route('pessoas.index'))->with('status', "Contato {$pessoa->nome} excluído para sempre.");
     }
 
     // GET /{id}/restaurar
@@ -142,17 +163,18 @@ class PessoasController extends Controller
 
         // Definimos as regras para os campos
         $rules = [
-            'nome' => 'required|string|max:150',
+            'nome' => 'required|string|min:5|max:150',
         ];
 
         // Definimos as mensagens de erro
         $messages = [
             'nome.required' => 'O campo nome é obrigatório.',
             'nome.string' => 'O campo nome precisa ser um nome.',
+            'nome.min' => 'O campo nome não pode ter menos de 5 caracteres.',
             'nome.max' => 'O campo nome não pode ter mais de 150 caracteres.',
         ];
 
-
+        // Retornamos o validador
         return Validator::make($data->all(), $rules, $messages);
     }
 

@@ -41,12 +41,15 @@
     @foreach ($listaPessoasExcluidas as $pessoaExcluida)
     <div class="col-4 col-xl-3 mt-3">
         <div class="card">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <div class="text-truncate">
-                    {{ $pessoaExcluida->nome }}
-                </div>
-                <div class="action ml-2 text-right">
-                    <a href="{{ route('pessoas.restore', [ 'id' => $pessoaExcluida->id ]) }}" class="small text-primary mr-1">Restaurar</a>
+            <div class="card-header">
+                <div class="row no-gutters">
+                    <div class="text-truncate col">
+                        {{ $pessoaExcluida->nome }}
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-end">
+                        <a href="{{ route('pessoas.restore', [ 'id' => $pessoaExcluida->id ]) }}" class="small text-primary mr-1">Restaurar</a>
+                        <a href="#!" id="desintegrar" data-id-contato="{{ $pessoaExcluida->id }}" class="small text-danger">Destruir</a>
+                    </div>
                 </div>
             </div>
             <ul class="list-group list-group-flush">
@@ -93,21 +96,40 @@
     </div>
 </div>
 
-
+<form id="desintegrarForm" action="{{ route('pessoas.deleteForever') }}" method="POST">
+    @csrf
+    <input type="hidden" name="id_pessoa" id="idPessoa" value="0">
+</form>
 
 @endsection
 
 @section('scripts')
 
 <script>
-    $('#excluirContato').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var nomeContato = button.data('nome-contato');
-        var idContato = button.data('id-contato');
+    $(document).ready(function () {
 
-        var modal = $(this);
-        modal.find('.nome-pessoa').text(nomeContato);
-        modal.find('#idPessoa').val(idContato);
+        $('#desintegrar').on('click', function (event) {
+            var button = $(this);
+            var idContato = button.data('id-contato');
+            var form = $('#desintegrarForm');
+
+            // Set the value
+            form.find('#idPessoa').val(idContato);
+
+            // Submit form
+            form.submit();
+        });
+
+        $('#excluirContato').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var nomeContato = button.data('nome-contato');
+            var idContato = button.data('id-contato');
+
+            var modal = $(this);
+            modal.find('.nome-pessoa').text(nomeContato);
+            modal.find('#idPessoa').val(idContato);
+        });
+        
     });
 </script>
 

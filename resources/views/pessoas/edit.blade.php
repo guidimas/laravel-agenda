@@ -18,7 +18,12 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">#{{ $pessoa->id }}</span>
                     </div>
-                    <input class="form-control" type="text" name="nome" maxlength="100" id="nome" placeholder="p. ex., Peter Parker" value="{{ $pessoa->nome }}" required>
+                    <input class="form-control{{ $errors->has('nome') ? ' is-invalid' : '' }}" type="text" name="nome" maxlength="100" id="nome" placeholder="p. ex., Peter Parker" value="{{ old('nome', $pessoa->nome) }}" required>
+                    @if($errors->has('nome'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('nome') }}
+                    </div>
+                    @endif
                 </div>
             </div>
         
